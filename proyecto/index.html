@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/presentacion.css">
+    <title>Crecimiento de una Bacteria</title>
+</head>
+
+<body>
+    <div class="container main-container">
+       <section class="presentacion">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-12 d-flex justify-content-center align-items-center text-center">
+                <h1>
+                    CRECIMIENTO DE UNA BACTERIA
+                </h1>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-warning ml-auto " data-toggle="modal" data-bs-toggle="modal"
+                    data-target="#exampleModal">
+                    Información
+                </button>
+
+              </section>
+                <!-- Modal -->
+               <section class="presentacion">
+                
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning ">
+                                <h5 class="modal-title" id="exampleModalLabel">Información Adicional</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                               <p> Calcula el tiempo en el que crece determinado número de bacterias. </p>
+                                <p>Para realizar el cálculo se utilizó la formula de Malthus </p>
+                                <img src="img/formula.jpg" class="img-fluid"> </img>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+              </section>
+            <form class="col-sm-12 col-md-6  mx-auto px-5 bg-white border py-4 row calc-section" id="dataForm">
+                <div class="col-md-8 col-sm-12">
+                    <div class="form-group">
+                        <strong><label for="">Ingrese la población Inicial:</label></strong>
+                        <input id="poblacionActual" type="number" class="form-control" placeholder="">
+                    </div>
+                </div>
+
+                <div class="col-md-8 col-sm-12">
+                    <div class="form-group">
+                        <strong><label for="">Ingrese tiempo transcurrido:</label></strong>
+                        <input id="t1" type="number" class="form-control" placeholder="">
+                    </div>
+                </div>
+                <div class="col-md-8 col-sm-12">
+                    <div class="form-group">
+                        <strong><label for="">Ingrese las bacterias crecidas despues del tiempo:</label></strong>
+                        <input id="BC" type="number" class="form-control" placeholder="">
+                    </div>
+                </div>
+
+
+
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <strong><label for="">Factor de crecimiento:</label></strong>
+                        <input id="anos" type="number" min="1" class="form-control" placeholder="">
+                    </div>
+                </div>
+             
+              
+                <hr class="col-12">
+
+                <a href="." class="col-12">
+                    <button class="btn btn-success form-control" type="submit" id="calc">Calcular</button>
+                </a>
+            </form>
+
+
+            <div class=" col-md-6 mt-2 mx-auto">
+                <canvas id="myChart" class="canvas"></canvas>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+<script>
+
+    $('#exampleModal').on('hidden.bs.modal', function (e) {
+        // do something...
+    })
+
+    let poblacionFinal;
+    let poblacionAnual = [];
+    let aux;
+
+    let ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Crecimiento Poblacional',
+                data: poblacionAnual,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    //Obtencion de datos
+    document.getElementById('dataForm').addEventListener('submit', (e) => {
+        e.preventDefault()
+        let poblacionActual = parseInt(document.getElementById('poblacionActual').value);
+        let anos = parseInt(document.getElementById('anos').value);
+        let t1 = parseInt(document.getElementById('t1').value);
+        let BC = parseInt(document.getElementById('BC').value);
+        //let tasaNatalidad = parseInt(document.getElementById('tasaNatalidad').value);
+        //let tasaMortalidad = parseInt(document.getElementById('tasaMortalidad').value);
+        //Calcular
+        let n1;
+         let n2; 
+         let n3;
+         let n4;
+        let today = new Date();
+        let years = []
+        poblacionAnual = []
+        aux = poblacionActual;
+
+        for (let i = 0; i <t1 ; i++) {
+             
+             n1=BC/poblacionActual;  
+             n3=Math.log(n1);
+             n4=Math.log(anos); 
+            poblacionFinal = n4/n3;
+            console.log(poblacionFinal)
+  
+            poblacionAnual.push(poblacionFinal);
+          //  aux = Math.log(poblacionFinal);
+            years.push(t1 + (i + 1))
+
+        }
+
+
+        myChart.destroy();
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Crecimiento Poblacional',
+                    data: poblacionAnual,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+
+
+    })
+
+</script>
+<footer>
+            <div class="footer__linea1"></div>
+            <div class="footer__linea2"></div>
+            <p class="footer__contenido">Todos los derechos reservados</p>
+            <p class="footer__contenido">Rivera Vergara Susana &copy2023</p>
+        </footer>
+
+</body>
+</html>
